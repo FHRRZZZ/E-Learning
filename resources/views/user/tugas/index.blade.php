@@ -3,21 +3,19 @@
 @section('content')
 <style>
 :root{
-  --bg-1:#071426;
-  --bg-2:#071e3a;
-  --card:rgba(255,255,255,0.03);
-  --glass-border:rgba(255,255,255,0.06);
-
-  --text-heading:#0b1220;
-  --text-body:#0f1724;
-  --text-muted:#6b7280;
-
-  --accent:#28a6ff;
-  --accent-2:#7c3aed;
+  --bg-1:#e0f2fe;
+  --bg-2:#bfdbfe;
+  --card:#ffffff;
+  --glass-border:rgba(59,130,246,0.2);
+  --text-heading:#1e3a8a;
+  --text-body:#1e293b;
+  --text-muted:#475569;
+  --accent:#3b82f6;
+  --accent-2:#2563eb;
   --success:#16a34a;
-  --danger:#ef4444;
+  --danger:#dc2626;
   --radius:14px;
-  --shadow:0 10px 30px rgba(2,6,23,0.06);
+  --shadow:0 10px 30px rgba(59,130,246,0.15);
   --transition:.18s cubic-bezier(.2,.9,.3,1);
 }
 
@@ -29,14 +27,14 @@ body{
 }
 
 h1{
-  font-size:28px;font-weight:700;
+  font-size:28px;
+  font-weight:700;
   color:var(--text-heading);
   margin:28px auto 24px;
   max-width:1200px;
   padding:0 20px;
 }
 
-/* Grid container */
 .grid-tugas{
   max-width:1200px;
   margin:0 auto 40px;
@@ -46,19 +44,18 @@ h1{
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 }
 
-/* Card */
 .card{
   background:var(--card);
   border:1px solid var(--glass-border);
   border-radius:12px;
   padding:18px;
-  backdrop-filter:blur(6px);
+  backdrop-filter:blur(8px);
   box-shadow:var(--shadow);
   transition:transform var(--transition),box-shadow var(--transition);
 }
-.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.08)}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.4)}
 .card h2{font-size:18px;margin:0 0 12px;color:var(--text-heading);}
-.card p{font-size:13px;color:var(--text-muted);margin:0 0 8px}
+.card p{font-size:14px;color:var(--text-body);margin:0 0 8px}
 
 a.download-link{
   display:inline-block;
@@ -66,23 +63,27 @@ a.download-link{
   border-radius:8px;
   background:linear-gradient(90deg,var(--accent),var(--accent-2));
   color:#fff;
-  font-weight:700;text-decoration:none;
-  box-shadow:0 6px 18px rgba(40,166,255,0.08);
-  transition:transform .2s;
+  font-weight:700;
+  text-decoration:none;
+  box-shadow:0 6px 18px rgba(40,166,255,0.15);
+  transition:transform .2s, box-shadow .2s;
 }
-a.download-link:hover{transform:translateY(-2px)}
+a.download-link:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(40,166,255,0.25)}
 
 .upload-form{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
 .upload-form input[type="file"]{
-  background:transparent;border:1px dashed rgba(255,255,255,0.08);
-  padding:10px;border-radius:8px;color:var(--text-heading);
+  background:rgba(255,255,255,0.08);
+  border:1px dashed rgba(255,255,255,0.3);
+  padding:10px;
+  border-radius:8px;
+  color:#000;
 }
 .upload-btn{
   background:linear-gradient(90deg,var(--accent),var(--accent-2));
-  border:none;color:#04293b;
+  border:none;color:#fff;
   padding:10px 14px;border-radius:10px;
   font-weight:700;cursor:pointer;
-  box-shadow:0 10px 24px rgba(44,163,255,0.12);
+  box-shadow:0 10px 24px rgba(44,163,255,0.25);
   transition:transform .2s;
 }
 .upload-btn:hover{transform:translateY(-3px)}
@@ -90,11 +91,40 @@ a.download-link:hover{transform:translateY(-2px)}
 .status-success{color:var(--success);font-weight:700;margin-top:6px}
 .error-msg{color:var(--danger);font-weight:700;margin-top:6px}
 
-.pagination{margin:30px auto 0;max-width:1200px;padding:0 20px;color:var(--text-muted)}
-.pagination nav a{color:var(--text-heading)}
+.pagination{
+  margin:30px auto 0;
+  max-width:1200px;
+  padding:0 20px;
+  color:var(--text-body);
+}
+.pagination nav a{color:#1e3a8a;text-decoration:none;}
+.pagination nav a:hover{text-decoration:underline;}
+
+.card-chart{
+  max-width:1200px;
+  margin:40px auto;
+  background:var(--card);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  padding:24px;
+  backdrop-filter:blur(10px);
+  box-shadow:var(--shadow);
+}
+.card-chart h2{
+  color:var(--text-heading);
+  font-size:20px;
+  margin-bottom:16px;
+}
+canvas{width:100%!important;height:auto!important}
 </style>
 
 <h1>Daftar Tugas Kelas {{ auth()->user()->kelas }}</h1>
+
+{{-- === Grafik Ditaruh di Atas === --}}
+<div class="card-chart">
+    <h2>Grafik Nilai Tugas</h2>
+    <canvas id="activityChart" height="100"></canvas>
+</div>
 
 <div class="grid-tugas">
 @foreach ($tugasList as $tugas)
@@ -141,27 +171,58 @@ a.download-link:hover{transform:translateY(-2px)}
     {{ $tugasList->links() }}
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.upload-form').forEach(form => {
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-            const f = form.querySelector('input[name="file"]');
-            if (!f.value) {
-                Swal.fire({icon:'error',title:'Oops...',text:'Silakan pilih file terlebih dahulu!'});
-                return;
+    // === Chart.js ===
+    const tugasData = @json(
+        $tugasList->map(fn($t) => [
+            'judul' => $t->judul,
+            'nilai' => $tugasKumpulUser[$t->id]->nilai ?? 0
+        ])
+    );
+
+    const labels = tugasData.map(t => t.judul);
+    const dataNilai = tugasData.map(t => t.nilai);
+
+    new Chart(document.getElementById('activityChart'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Nilai Tugas',
+                data: dataNilai,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37,99,235,0.2)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2,
+                pointBackgroundColor: '#3b82f6',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#1e293b', font: { size: 12 } },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                },
+                y: {
+                    min: 0, max: 100,
+                    ticks: { stepSize: 10, color: '#1e293b', font: { size: 12 } },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
+                }
             }
-            Swal.fire({title:'Mengunggah...',text:'Tugas sedang diupload',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
-            form.submit();
-        });
+        }
     });
-    @if(session('success'))
-      Swal.fire({icon:'success',title:'Berhasil!',text:'{{ session('success') }}'});
-    @endif
-    @if(session('error'))
-      Swal.fire({icon:'error',title:'Gagal!',text:'{{ session('error') }}'});
-    @endif
 });
 </script>
 @endsection

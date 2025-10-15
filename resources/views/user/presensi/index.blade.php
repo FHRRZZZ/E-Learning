@@ -5,125 +5,134 @@
 
 @section('content')
 <style>
-:root{
-  --page-bg: #f5f7fb;
+:root {
+  --page-bg: #eef2f7;
   --card-bg: #ffffff;
-  --muted: #6b7280;
-  --text: #0f172a;
+  --text: #1e293b;
+  --muted: #64748b;
   --accent: #2563eb;
-  --accent-2: #06b6d4;
+  --accent-light: #dbeafe;
   --success: #16a34a;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --glass: rgba(2,6,23,0.04);
-  --radius:12px;
-  --shadow: 0 10px 30px rgba(2,6,23,0.06);
+  --radius: 14px;
+  --shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
-*{box-sizing:border-box}
-body{background:var(--page-bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);margin:0;padding:0}
-.container{
-  max-width:1060px;
-  margin:28px auto;
-  padding:24px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+body {
+  background: var(--page-bg);
+  font-family: "Poppins", sans-serif;
+  color: var(--text);
+  margin: 0;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 30px auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* Heading */
-h2{
-  font-size:22px;
-  font-weight:700;
-  margin:0 0 6px;
-  color:var(--text);
-  letter-spacing: -0.2px;
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+  border-left: 6px solid var(--accent);
+  padding-left: 12px;
 }
 
 /* Grid */
-.grid{
-  display:flex;
-  flex-wrap:wrap;
-  gap:20px;
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
 }
 
 /* Card */
-.card{
-  background:var(--card-bg);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:16px;
-  width:320px;
-  transition:transform .18s ease,box-shadow .18s ease;
-  border:1px solid var(--glass);
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 18px 40px rgba(2,6,23,0.08);
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  width: 320px;
+  transition: all 0.25s ease;
+  border-top: 4px solid transparent;
+  cursor: default;
 }
 
-/* Date/time */
-.card .date-time{
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:2px;
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.1);
 }
 
-/* Status badge */
-.card .status{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:15px;
-  font-weight:700;
-  width:fit-content;
-  box-shadow:0 6px 18px rgba(37,99,235,0.06);
+/* Date and Time */
+.card .date-time {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 8px;
 }
 
-/* specific status colors (text use dark for contrast) */
-.status-hadir{
-  background:linear-gradient(90deg, rgba(22,163,74,0.12), rgba(22,163,74,0.06));
-  color:var(--success);
-  border:1px solid rgba(22,163,74,0.12);
+/* Status */
+.status {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 10px;
 }
-.status-sakit{
-  background:linear-gradient(90deg, rgba(245,158,11,0.10), rgba(245,158,11,0.04));
-  color:var(--warning);
-  border:1px solid rgba(245,158,11,0.08);
+
+.status-hadir {
+  background: #dcfce7;
+  color: var(--success);
+  border-left: 5px solid var(--success);
 }
-.status-izin{
-  background:linear-gradient(90deg, rgba(37,99,235,0.10), rgba(6,182,212,0.04));
-  color:var(--accent);
-  border:1px solid rgba(37,99,235,0.08);
+.status-sakit {
+  background: #fef9c3;
+  color: var(--warning);
+  border-left: 5px solid var(--warning);
 }
-.status-alpa{
-  background:linear-gradient(90deg, rgba(239,68,68,0.10), rgba(239,68,68,0.04));
-  color:var(--danger);
-  border:1px solid rgba(239,68,68,0.08);
+.status-izin {
+  background: #dbeafe;
+  color: var(--accent);
+  border-left: 5px solid var(--accent);
+}
+.status-alpa {
+  background: #fee2e2;
+  color: var(--danger);
+  border-left: 5px solid var(--danger);
 }
 
 /* Keterangan */
-.card .keterangan{
-  margin-top:6px;
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.3;
-}
-
-/* Responsive: make cards full width on small screens */
-@media (max-width:980px){
-  .card{width:100%}
-  .grid{flex-direction:column}
+.keterangan {
+  font-size: 15px;
+  color: var(--muted);
+  margin-top: 6px;
 }
 
 /* Pagination */
-.pagination{margin-top:12px; color:var(--muted)}
-.pagination nav a{color:var(--accent)}
+.pagination {
+  margin-top: 10px;
+  text-align: center;
+}
+.pagination nav a {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .card {
+    width: 100%;
+  }
+  .grid {
+    flex-direction: column;
+  }
+}
 </style>
 
 <div class="container">
